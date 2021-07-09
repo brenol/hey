@@ -16,10 +16,12 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"math"
+	"mime/multipart"
 	"net/http"
 	gourl "net/url"
 	"os"
@@ -48,6 +50,8 @@ var (
 	authHeader  = flag.String("a", "", "")
 	hostHeader  = flag.String("host", "", "")
 	userAgent   = flag.String("U", "", "")
+
+	formDataFieldName = flag.String("fdf", "", "")
 
 	output = flag.String("o", "", "")
 
@@ -189,6 +193,24 @@ func main() {
 		if err != nil {
 			usageAndExit(err.Error())
 		}
+	}
+
+	if *bodyFile != "" && *formDataFieldName != "" {
+		var b bytes.Buffer
+		w := multipart.NewWriter(&b)
+		ww, err := w.CreateFormFile(*formDataFieldName, *bodyFile)
+		if err != nil {
+			usageAndExit(err.Error())
+		}
+		if _, err := ww.Write(bodyAll); err != nil {
+			usageAndExit(err.Error())
+		}
+		if err := w.Close(); err != nil {
+			usageAndExit(err.Error())
+		}
+
+		header.Set("Content-Type", w.FormDataContentType())
+		bodyAll = b.Bytes()
 	}
 
 	req, err := http.NewRequest(method, url, nil)
