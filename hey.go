@@ -31,7 +31,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rakyll/hey/requester"
+	"github.com/brenol/hey/requester"
 )
 
 const (
