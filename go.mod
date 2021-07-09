@@ -1,6 +1,9 @@
-module github.com/rakyll/hey
+module github.com/brenol/hey
+
+replace github.com/rakyll/hey => ./
 
 require (
+	github.com/rakyll/hey v0.1.4 // indirect
 	golang.org/x/net v0.0.0-20191009170851-d66e71096ffb
 	golang.org/x/text v0.3.2 // indirect
 )
